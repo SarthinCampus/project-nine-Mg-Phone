@@ -1,0 +1,111 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Calculator – Addition
+      id: calculator-addition
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Calculator – Addition
+        setup-command: ''
+        command: python3 calculator.py
+        input: 10\n5\n+
+        expected-output: 'Result: 15.0'
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: Calculator – Subtraction
+      id: calculator-subtraction
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Calculator – Subtraction
+        setup-command: ''
+        command: python3 calculator.py
+        input: 20\n8\n-
+        expected-output: 'Result: 12.0'
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: Calculator – Multiplication
+      id: calculator-multiplication
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Calculator – Multiplication
+        setup-command: ''
+        command: python3 calculator.py
+        input: 7\n3\n*
+        expected-output: 'Result: 21.0'
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: Calculator – Division
+      id: calculator-division
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Calculator – Division
+        setup-command: ''
+        command: python3 calculator.py
+        input: 18\n6\n/
+        expected-output: 'Result: 3.0'
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: Calculator – Invalid Operator
+      id: calculator-invalid-operator
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Calculator – Invalid Operator
+        setup-command: ''
+        command: python3 calculator.py
+        input: 4\n5\nx
+        expected-output: Invalid operator
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: Calculator – Divide by Zero
+      id: calculator-divide-by-zero
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Calculator – Divide by Zero
+        setup-command: ''
+        command: python3 calculator.py
+        input: 5\n0\n/
+        expected-output: 'Error: Cannot divide by zero'
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: Calculator – Decimal Add
+      id: calculator-decimal-add
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Calculator – Decimal Add
+        setup-command: ''
+        command: python3 calculator.py
+        input: 2.5\n3.5\n+
+        expected-output: 'Result: 6.0'
+        comparison-method: contains
+        timeout: 10
+        max-score: 1
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        CALCULATOR-ADDITION_RESULTS: "${{steps.calculator-addition.outputs.result}}"
+        CALCULATOR-SUBTRACTION_RESULTS: "${{steps.calculator-subtraction.outputs.result}}"
+        CALCULATOR-MULTIPLICATION_RESULTS: "${{steps.calculator-multiplication.outputs.result}}"
+        CALCULATOR-DIVISION_RESULTS: "${{steps.calculator-division.outputs.result}}"
+        CALCULATOR-INVALID-OPERATOR_RESULTS: "${{steps.calculator-invalid-operator.outputs.result}}"
+        CALCULATOR-DIVIDE-BY-ZERO_RESULTS: "${{steps.calculator-divide-by-zero.outputs.result}}"
+        CALCULATOR-DECIMAL-ADD_RESULTS: "${{steps.calculator-decimal-add.outputs.result}}"
+      with:
+        runners: calculator-addition,calculator-subtraction,calculator-multiplication,calculator-division,calculator-invalid-operator,calculator-divide-by-zero,calculator-decimal-add
